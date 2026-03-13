@@ -1,15 +1,16 @@
-import React, { useState, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
   faShoppingCart,
   faShoppingBasket,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../store/cart-slice";
 
 export default function ProductDetail() {
-
   const location = useLocation();
   const product = location.state?.product;
   const navigate = useNavigate();
@@ -17,6 +18,12 @@ export default function ProductDetail() {
   const zoomRef = useRef(null);
   const [isHovering, setIsHovering] = useState(false);
   const [backgroundPosition, setBackgroundPosition] = useState("center");
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    if (quantity < 1) return;
+    dispatch(addToCart({ product, quantity }));
+  };
 
   const handleMouseMove = (e) => {
     const { left, top, width, height } =
@@ -94,13 +101,16 @@ export default function ProductDetail() {
                 id="quantity"
                 min="1"
                 value={quantity}
-                onChange={(e)=>setQuantity(parseInt(e.target.value) || 1)}
+                onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
                 className="w-16 px-2 py-1 border rounded-md focus:ring focus:ring-light dark:focus:ring-gray-600 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               />
             </div>
 
             {/* Add to Cart Button */}
-            <button className="w-full px-4 py-2 bg-primary dark:bg-light text-white dark:text-black rounded-md text-lg font-semibold hover:bg-dark dark:hover:bg-lighter transition">
+            <button
+              onClick={handleAddToCart}
+              className="w-full px-4 py-2 bg-primary dark:bg-light text-white dark:text-black rounded-md text-lg font-semibold hover:bg-dark dark:hover:bg-lighter transition"
+            >
               Add to Cart
               <FontAwesomeIcon icon={faShoppingCart} className="ml-2" />
             </button>
